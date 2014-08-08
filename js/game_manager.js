@@ -1,3 +1,5 @@
+NameArray = ['夏','商','西周','春秋','战国','秦','汉','三国','两晋','南北朝','隋','唐','五代十国','宋','元','明','清','民国','新中国'];
+
 function GameManager(size, InputManager, Actuator, StorageManager) {
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
@@ -68,7 +70,7 @@ GameManager.prototype.addStartTiles = function () {
 // Adds a tile in a random position
 GameManager.prototype.addRandomTile = function () {
   if (this.grid.cellsAvailable()) {
-    var value = Math.random() < 0.9 ? 2 : 4;
+    var value = Math.random() < 0.9 ? NameArray[0] : NameArray[1];
     var tile = new Tile(this.grid.randomAvailableCell(), value);
 
     this.grid.insertTile(tile);
@@ -154,7 +156,8 @@ GameManager.prototype.move = function (direction) {
 
         // Only one merger per row traversal?
         if (next && next.value === tile.value && !next.mergedFrom) {
-          var merged = new Tile(positions.next, tile.value * 2);
+          var pos =NameArray.indexOf(tile.value);
+          var merged = new Tile(positions.next, NameArray[pos+1]);
           merged.mergedFrom = [tile, next];
 
           self.grid.insertTile(merged);
@@ -164,10 +167,11 @@ GameManager.prototype.move = function (direction) {
           tile.updatePosition(positions.next);
 
           // Update the score
-          self.score += merged.value;
-
+          now_value=Math.pow(2,pos+2);
+          self.score += now_value;
+          
           // The mighty 2048 tile
-          if (merged.value === 2048) self.won = true;
+          if (now_value === 2048) self.won = true;
         } else {
           self.moveTile(tile, positions.farthest);
         }
